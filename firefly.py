@@ -7,11 +7,12 @@ class Firefly(Vehicle):
 
     # CONFIG
     debug = False
+    color = pg.Color('gray20')
     min_speed = .01
-    max_speed = .2
-    max_force = 1
+    max_speed = .07
+    max_force = .5
     max_turn = 5
-    perception = 60
+    perception = 20
     crowding = 15
     can_wrap = False
     edge_distance_pct = 5
@@ -30,7 +31,8 @@ class Firefly(Vehicle):
 
         super().__init__(start_position, start_velocity,
                          Firefly.min_speed, Firefly.max_speed,
-                         Firefly.max_force, Firefly.can_wrap)
+                         Firefly.max_force, Firefly.can_wrap,
+                         Firefly.color)
 
         self.rect = self.image.get_rect(center=self.position)
 
