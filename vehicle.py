@@ -10,8 +10,8 @@ class Vehicle(pg.sprite.Sprite):
 
         super().__init__()
 
-        self.color = color or pg.Color('white')
-        pg.draw.polygon(Vehicle.image, self.color,
+        self.color = color or 'white'
+        pg.draw.polygon(Vehicle.image, pg.Color(self.color),
                         [(15, 5), (0, 2), (0, 8)])
 
         # set limits

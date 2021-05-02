@@ -1,5 +1,6 @@
 # Import standard modules.
 import argparse
+import configparser
 import sys
 
 # Import non-standard modules.
@@ -9,11 +10,15 @@ from pygame.locals import *
 # Import local modules
 from firefly import Firefly
 
+# Read and apply config settings
+config_file = configparser.ConfigParser()
+config_file.read('config.ini')
+Firefly.config(config_file['firefly'])
 CONFIG = {
-    'title': 'Fireflies!',
-    'logo': 'logo32x32.png',
-    'default_flies': 100,
-    'default_geometry': '1000x1000'
+    'title': config_file.get('main', 'title'),
+    'logo': config_file.get('main', 'logo'),
+    'count': config_file.getint('main', 'count'),
+    'geometry': config_file.get('main', 'geometry')
 }
 
 def update(dt, flies):
@@ -145,10 +150,10 @@ def add_flies(flies, num_flies):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Emergent flocking.')
     parser.add_argument('--geometry', metavar='WxH', type=str,
-                        default=CONFIG['default_geometry'],
+                        default=CONFIG['geometry'],
                         help='geometry of window')
     parser.add_argument('--number', dest='num_flies',
-                        default=CONFIG['default_flies'],
+                        default=CONFIG['count'],
                         help='number of flies to generate')
     args = parser.parse_args()
 

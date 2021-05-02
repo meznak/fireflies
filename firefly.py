@@ -1,22 +1,10 @@
+import configparser
 import pygame as pg
 from random import uniform
 from vehicle import Vehicle
 
 
 class Firefly(Vehicle):
-
-    # CONFIG
-    debug = False
-    color = pg.Color('gray20')
-    min_speed = .01
-    max_speed = .07
-    max_force = .5
-    max_turn = 5
-    perception = 20
-    crowding = 15
-    can_wrap = False
-    edge_distance_pct = 5
-    ###############
 
     def __init__(self):
         Firefly.set_boundary(Firefly.edge_distance_pct)
@@ -37,6 +25,16 @@ class Firefly(Vehicle):
         self.rect = self.image.get_rect(center=self.position)
 
         self.debug = Firefly.debug
+
+    @staticmethod
+    def config(config: dict):
+        for key in config:
+            if key in ['debug', 'can_wrap']:
+                setattr(Firefly, key, config.getboolean(key))
+            elif key in ['color']:
+                setattr(Firefly, key, config.get(key))
+            else:
+                setattr(Firefly, key, config.getfloat(key))
 
     def separation(self, flies):
         steering = pg.Vector2()

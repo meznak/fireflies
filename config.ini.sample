@@ -1,0 +1,18 @@
+[main]
+title = Fireflies!
+logo = logo32x32.png
+count = 100
+geometry = 1000x1000
+
+[firefly]
+debug = False
+color = gray20
+min_speed = 0.01
+max_speed = 0.07
+max_force = 0.5
+max_turn = 5
+perception = 20
+crowding = 15
+can_wrap = False
+edge_distance_pct = 5
+
