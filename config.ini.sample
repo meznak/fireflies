@@ -7,12 +7,16 @@ geometry = 1000x1000
 [firefly]
 debug = False
 color = gray20
+flash_color = chartreuse2
+min_interval = 10
+max_interval = 1000
+min_flash = 1
+max_flash = 30
 min_speed = 0.01
 max_speed = 0.07
 max_force = 0.5
 max_turn = 5
-perception = 20
-crowding = 15
+perception = 40
+crowding = 20
 can_wrap = False
 edge_distance_pct = 5
-

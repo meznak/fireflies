@@ -3,16 +3,14 @@ import pygame as pg
 
 class Vehicle(pg.sprite.Sprite):
     # default image is a li'l white triangle
-    image = pg.Surface((10, 10), pg.SRCALPHA)
+    main_image = pg.Surface((10, 10), pg.SRCALPHA)
+    alt_image = pg.Surface((10, 10), pg.SRCALPHA)
+    image = main_image
 
     def __init__(self, position, velocity, min_speed, max_speed,
-                 max_force, can_wrap, color):
+                 max_force, can_wrap, color, alt_color):
 
         super().__init__()
-
-        self.color = color or 'white'
-        pg.draw.polygon(Vehicle.image, pg.Color(self.color),
-                        [(15, 5), (0, 2), (0, 8)])
 
         # set limits
         self.min_speed = min_speed
@@ -33,10 +31,16 @@ class Vehicle(pg.sprite.Sprite):
             self.velocity = pg.Vector3(velocity)
 
         self.heading = 0.0
-
         self.rect = self.image.get_rect(center=self.position)
+        self.color = color
+        self.flash_color = alt_color
 
-    def update(self, dt, steering):
+        pg.draw.polygon(Vehicle.main_image, pg.Color(color),
+                        [(15, 5), (0, 2), (0, 8)])
+        pg.draw.polygon(Vehicle.alt_image, pg.Color(alt_color),
+                        [(15, 5), (0, 2), (0, 8)])
+
+    def update(self, dt, steering, is_flashing: bool):
         self.acceleration = steering * dt
 
         # enforce turn limit
@@ -68,7 +72,10 @@ class Vehicle(pg.sprite.Sprite):
             self.wrap()
 
         # draw
-        self.image = pg.transform.rotate(Vehicle.image, -self.heading)
+        if is_flashing:
+            self.image = pg.transform.rotate(Vehicle.alt_image, -self.heading)
+        else:
+            self.image = pg.transform.rotate(Vehicle.main_image, -self.heading)
 
         if self.debug:
             center = pg.Vector2((50, 50))

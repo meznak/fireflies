@@ -20,9 +20,15 @@ class Firefly(Vehicle):
         super().__init__(start_position, start_velocity,
                          Firefly.min_speed, Firefly.max_speed,
                          Firefly.max_force, Firefly.can_wrap,
-                         Firefly.color)
+                         Firefly.color, Firefly.flash_color)
 
         self.rect = self.image.get_rect(center=self.position)
+        self.flash_interval = uniform(Firefly.min_interval,
+                                      Firefly.max_interval)
+        self.flash_length = uniform(Firefly.min_flash, min(Firefly.max_flash,
+                                    self.flash_interval / 4))
+        self.flash_cycle = 0
+        self.is_flashing = False
 
         self.debug = Firefly.debug
 
@@ -31,8 +37,10 @@ class Firefly(Vehicle):
         for key in config:
             if key in ['debug', 'can_wrap']:
                 setattr(Firefly, key, config.getboolean(key))
-            elif key in ['color']:
+            elif key in ['color', 'flash_color']:
                 setattr(Firefly, key, config.get(key))
+            elif key in ['min_interval', 'max_interval']:
+                setattr(Firefly, key, config.getint(key))
             else:
                 setattr(Firefly, key, config.getfloat(key))
 
@@ -85,7 +93,16 @@ class Firefly(Vehicle):
 
         # steering = self.clamp_force(steering)
 
-        super().update(dt, steering)
+        if self.flash_cycle > self.flash_interval:
+            if self.flash_cycle < self.flash_interval + self.flash_length:
+                self.is_flashing = True
+            else:
+                self.flash_cycle -= self.flash_interval
+                self.is_flashing = False
+
+        self.flash_cycle += 1
+
+        super().update(dt, steering, self.is_flashing)
 
     def get_neighbors(self, flies):
         neighbors = []

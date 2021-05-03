@@ -21,6 +21,7 @@ CONFIG = {
     'geometry': config_file.get('main', 'geometry')
 }
 
+
 def update(dt, flies):
     """
     Update game. Called once per frame.
