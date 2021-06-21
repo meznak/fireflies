@@ -89,9 +89,12 @@ def update(dt, flies):
                 num_flies = len(flies)
                 flies.empty()
                 add_flies(flies, num_flies)
+                return True
 
     for b in flies:
         b.update(dt, flies)
+
+    return False
 
 
 def draw(screen, background, flies):
@@ -138,7 +141,8 @@ def main(args):
 
     # Loop forever!
     while True:
-        update(dt, flies)
+        if update(dt, flies):
+            pg.display.update()
         draw(screen, background, flies)
         dt = fpsClock.tick(fps)
 
