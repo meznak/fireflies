@@ -5,6 +5,8 @@ from vehicle import Vehicle
 
 
 class Firefly(Vehicle):
+    flash_interval = 200
+    flash_length = 20
 
     def __init__(self):
         Firefly.set_boundary(Firefly.edge_distance_pct)
@@ -23,11 +25,12 @@ class Firefly(Vehicle):
                          Firefly.color, Firefly.flash_color)
 
         self.rect = self.image.get_rect(center=self.position)
-        self.flash_interval = randint(Firefly.min_interval,
-                                      Firefly.max_interval)
-        self.flash_length = randint(Firefly.min_flash, Firefly.max_flash)
-        self.flash_cycle = 0
+        # self.flash_interval = randint(Firefly.min_interval,
+        #                              Firefly.max_interval)
+        # self.flash_length = randint(Firefly.min_flash, Firefly.max_flash)
+        self.flash_cycle = randint(Firefly.min_interval, self.flash_interval)
         self.is_flashing = False
+        self.flash_start = None
 
         self.debug = Firefly.debug
 
@@ -43,10 +46,6 @@ class Firefly(Vehicle):
                 setattr(Firefly, key, config.getint(key))
             else:
                 setattr(Firefly, key, config.getfloat(key))
-
-    @staticmethod
-    def clamp_interval(cycles: int) -> int:
-        return max(Firefly.min_interval, min(cycles, Firefly.max_interval))
 
     def separation(self, flies):
         steering = pg.Vector2()
@@ -78,9 +77,8 @@ class Firefly(Vehicle):
     def synchronize(self, flies):
         steering = 0
         for fly in flies:
-            steering += fly.is_flashing
-            steering /= float(len(flies))
-            return steering
+            steering += 1 * fly.is_flashing
+        return steering
 
     def update(self, dt, flies):
         steering = pg.Vector2()
@@ -104,25 +102,20 @@ class Firefly(Vehicle):
             steering += separation + alignment + cohesion
 
             if not self.is_flashing:
-                cycle_diff = int(abs(self.flash_cycle - self.flash_interval)
-                                 * sync)
-                if self.flash_cycle < self.flash_interval / 2:
-                    self.flash_interval = self.clamp_interval(self.flash_interval + cycle_diff)
-                    self.flash_cycle += cycle_diff
-                    # self.flash_cycle = self.clamp_interval(self.flash_cycle - randint(0, cycle_diff))
-                else:
-                    self.flash_interval = self.clamp_interval(self.flash_interval - cycle_diff)
-                    # self.flash_cycle = self.clamp_interval(self.flash_cycle + randint(0, cycle_diff))
+                cycle_percent = self.flash_cycle / self.flash_interval
+                self.flash_cycle += sync * cycle_percent
 
             if self.flash_interval < self.flash_length * 2:
                 self.flash_interval *= 2
 
-        if self.flash_cycle > self.flash_interval:
-            if self.flash_cycle < self.flash_interval + self.flash_length:
+        if self.flash_cycle >= self.flash_interval:
+            self.flash_start = self.flash_start or self.flash_cycle
+            if self.flash_cycle < self.flash_start + self.flash_length:
                 self.is_flashing = True
             else:
-                self.flash_cycle -= self.flash_interval
+                self.flash_cycle = 0
                 self.is_flashing = False
+                self.flash_start = None
 
         self.flash_cycle += 1
 
