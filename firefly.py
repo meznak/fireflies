@@ -5,8 +5,6 @@ from vehicle import Vehicle
 
 
 class Firefly(Vehicle):
-    flash_interval = 200
-    flash_length = 20
 
     def __init__(self):
         Firefly.set_boundary(Firefly.edge_distance_pct)
@@ -25,10 +23,10 @@ class Firefly(Vehicle):
                          Firefly.color, Firefly.flash_color)
 
         self.rect = self.image.get_rect(center=self.position)
-        # self.flash_interval = randint(Firefly.min_interval,
-        #                              Firefly.max_interval)
-        # self.flash_length = randint(Firefly.min_flash, Firefly.max_flash)
-        self.flash_cycle = randint(Firefly.min_interval, self.flash_interval)
+        self.flash_interval = randint(Firefly.min_interval,
+                                      Firefly.max_interval)
+        self.flash_length = randint(Firefly.min_flash, Firefly.max_flash)
+        self.flash_cycle = randint(0, self.flash_interval)
         self.is_flashing = False
         self.flash_start = None
 
